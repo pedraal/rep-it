@@ -42,7 +42,7 @@ const chromakeyMode = ref(false)
 const chromakeyBgColor = ref('#38bef8')
 const chromakeyTextColor = ref('#ffffff')
 const sound = ref(true)
-const startWithRest = ref(true)
+const startWithRest = ref(false)
 
 const audio = new Audio('/bell.mp3')
 function playSound() {
@@ -209,13 +209,18 @@ onMounted(() => {
                 Ajouter
               </Button>
             </div>
+            <div md:w-full>
+              <Button :disabled="isActive" w-full @click.prevent="exercices = []">
+                Tout supprimer
+              </Button>
+            </div>
           </div>
           <div flex flex-wrap gap-4 md:flex-col>
-            <Checkbox v-model="startWithRest" name="start-with-rest">
-              Commencer en repos
-            </Checkbox>
             <Checkbox v-model="sound" name="sound">
               Son
+            </Checkbox>
+            <Checkbox v-model="startWithRest" name="start-with-rest">
+              Commencer en repos
             </Checkbox>
             <Checkbox v-model="showExerciceIndex" name="show-exercice-index">
               Afficher les numéros
