@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@unhead/vue": "^1.1.26",
     "@unocss/reset": "^0.51.12",
     "@vueuse/core": "^10.1.2",
     "@vueuse/sound": "^2.0.1",

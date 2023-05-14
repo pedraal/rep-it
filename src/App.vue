@@ -1,10 +1,33 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useClipboard, useIntervalFn, useUrlSearchParams } from '@vueuse/core'
+import { useHead } from '@unhead/vue'
 
 import Input from './components/Input.vue'
 import Checkbox from './components/Checkbox.vue'
 import Button from './components/Button.vue'
+
+useHead({
+  title: 'RepIt',
+  script: [
+    {
+      'src': 'https://plausible.pedraal.fr/js/plausible.js',
+      'defer': true,
+      'data-domain': window.location?.host,
+    },
+  ],
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/svg+xml',
+      href: '/vite.svg',
+    },
+  ],
+  meta: [
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+  ],
+})
 
 const repetitions = ref(3)
 const duration = ref(30)
