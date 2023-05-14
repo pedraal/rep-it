@@ -48,7 +48,16 @@ function playSound() {
   audio.play()
 }
 
-const exercices = ref<string[]>([])
+const exercices = ref<string[]>([
+  'Jumping jacks',
+  'Fentes avant',
+  'Burpees',
+  'Hip thrust',
+  'V up',
+  'Moutain climbers',
+  'Tirages dos',
+  'Planche',
+])
 const currentExercice = ref(0)
 const currentRepetition = ref(1)
 const isResting = ref(true)
@@ -188,7 +197,7 @@ onMounted(() => {
             </Input>
           </div>
           <div flex flex-col gap-4>
-            <Input v-model="newExercice" name="rest" :disabled="isActive" @keyup.enter.prevent="addExercice">
+            <Input v-model="newExercice" name="exercice" :disabled="isActive" @keyup.enter.prevent="addExercice">
               Exercice
             </Input>
             <div md:w-full>
@@ -229,15 +238,15 @@ onMounted(() => {
       </div>
       <div flex grow flex-col gap-4 pt-14 md:px-12 :style="{ background: chromakeyMode ? chromakeyBgColor : '', color: chromakeyMode ? chromakeyTextColor : '' }">
         <div flex gap-2>
-          <Button :disabled="isActive || !exercices.length" @click="start">
+          <Button :disabled="isActive || !exercices.length" aria-label="Start" @click="start">
             <span i-ic-round-play-arrow inline-block text-2xl />
             <span class="hidden" md:inline-block>{{ stopped ? 'Commencer' : 'Reprendre' }}</span>
           </Button>
-          <Button :disabled="!isActive" @click="pause">
+          <Button :disabled="!isActive" aria-label="Pause" @click="pause">
             <span i-ic-round-pause inline-block text-2xl />
             <span class="hidden" md:inline-block>Pause</span>
           </Button>
-          <Button :disabled="stopped" @click="stop">
+          <Button :disabled="stopped" aria-label="Stop" @click="stop">
             <span i-ic-round-stop inline-block text-2xl />
             <span class="hidden" md:inline-block>Stop</span>
           </Button>
@@ -248,10 +257,10 @@ onMounted(() => {
         <p font-mono text="lg md:2xl">
           {{ formatedGlobalTimer }}
         </p>
+        <p text="3xl md:5xl">
+          Série n°<span font-mono>{{ currentRepetition }}</span>
+        </p>
         <ul>
-          <p mb-4 text="3xl md:5xl">
-            Série n°<span font-mono>{{ currentRepetition }}</span>
-          </p>
           <template v-for="(exercice, index) in exercices" :key="`${exercice}`">
             <li relative my-1 flex items-center gap-3 text="xl md:3xl" :class="[exerciceIsRunning(index) && 'text-lime-400', exerciceIsResting(index) && 'text-amber', stopped && 'hover:line-through cursor-pointer']" @click="stopped ? removeExercice(index) : true">
               <div absolute mt-1 h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
