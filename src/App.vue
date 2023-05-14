@@ -7,8 +7,8 @@ import Checkbox from './components/Checkbox.vue'
 import Button from './components/Button.vue'
 
 const repetitions = ref(3)
-const duration = ref(3)
-const rest = ref(1)
+const duration = ref(30)
+const rest = ref(15)
 const newExercice = ref('')
 const showExerciceIndex = ref(false)
 const chromakeyMode = ref(false)
