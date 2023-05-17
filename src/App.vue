@@ -64,7 +64,7 @@ const exercices = ref<string[]>([
 ])
 const currentExercice = ref(0)
 const currentRepetition = ref(1)
-const isResting = ref(true)
+const isResting = ref(false)
 const finished = ref(false)
 const stopped = ref(true)
 
@@ -112,11 +112,14 @@ function start() {
   if (stopped.value) {
     stopped.value = false
     globalTimer.value = 0
-    isResting.value = true
+    isResting.value = false
     timer.value = 0
     currentExercice.value = 0
     currentRepetition.value = 1
   }
+
+  if (startWithRest.value)
+    isResting.value = true
 
   finished.value = false
   resume()
@@ -180,16 +183,16 @@ onMounted(() => {
 <template>
   <div min-h-screen w-screen bg-zinc-900 p="x-8 md:x-4 t-4 b-12" font-sans text-white>
     <h1 text-5xl>
-      <div i-ic-round-sports-gymnastics inline-block text-3xl text-lime-400 />
-      <span underline underline-lime-400 underline-offset-6>RepIt</span>
+      <div i-ic-round-sports-gymnastics inline-block text="3xl lime-400" />
+      <span underline="~ lime-400 offset-6">RepIt</span>
     </h1>
     <div mt-6 gap-8 md:flex xl:gap-24>
       <div md:max-w-sm>
         <p text-2xl>
           Paramètres
         </p>
-        <form my-4 flex flex-col gap-4 @submit.prevent>
-          <div flex gap-4 md:flex-col>
+        <form my-4 flex="~ col" gap-4 @submit.prevent>
+          <div flex="~ md:col" gap-4>
             <Input v-model="repetitions" name="repetitions" :disabled="isActive" w="1/4 md:full">
               Séries
             </Input>
@@ -200,7 +203,7 @@ onMounted(() => {
               Repos
             </Input>
           </div>
-          <div flex flex-col gap-4>
+          <div flex="~ col" gap-4>
             <Input v-model="newExercice" name="exercice" :disabled="isActive" @keyup.enter.prevent="addExercice">
               Exercice
             </Input>
@@ -215,7 +218,7 @@ onMounted(() => {
               </Button>
             </div>
           </div>
-          <div flex flex-wrap gap-4 md:flex-col>
+          <div flex="~ wrap md:col" gap-4>
             <Checkbox v-model="sound" name="sound">
               Son
             </Checkbox>
@@ -226,7 +229,7 @@ onMounted(() => {
               Afficher les numéros
             </Checkbox>
           </div>
-          <div class="hidden" flex-col gap-4 md:flex>
+          <div class="hidden" flex="md:~ col" gap-4>
             <Checkbox v-model="chromakeyMode" name="chromakey-mode">
               Mode chromakey
             </Checkbox>
@@ -245,7 +248,7 @@ onMounted(() => {
           </Button>
         </form>
       </div>
-      <div flex grow flex-col gap-4 pt-14 md:px-12 :style="{ background: chromakeyMode ? chromakeyBgColor : '', color: chromakeyMode ? chromakeyTextColor : '' }">
+      <div flex="~col" grow gap-4 pt-14 md:px-12 :style="{ background: chromakeyMode ? chromakeyBgColor : '', color: chromakeyMode ? chromakeyTextColor : '' }">
         <div flex gap-2>
           <Button :disabled="isActive || !exercices.length" aria-label="Start" @click="start">
             <span i-ic-round-play-arrow inline-block text-2xl />
@@ -266,7 +269,7 @@ onMounted(() => {
         <p font-mono text="lg md:2xl">
           {{ formatedGlobalTimer }}
         </p>
-        <p text="3xl md:5xl">
+        <p v-if="exercices.length" text="3xl md:5xl">
           Série n°<span font-mono>{{ currentRepetition }}</span>
         </p>
         <ul>
