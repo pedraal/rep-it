@@ -20,7 +20,7 @@ useHead({
     {
       rel: 'icon',
       type: 'image/svg+xml',
-      href: '/vite.svg',
+      href: '/favicon.svg',
     },
   ],
   meta: [
