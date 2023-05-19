@@ -248,7 +248,7 @@ onMounted(() => {
           </Button>
         </form>
       </div>
-      <div flex="~col" grow gap-4 pt-14 md:px-12 :style="{ background: chromakeyMode ? chromakeyBgColor : '', color: chromakeyMode ? chromakeyTextColor : '' }">
+      <div flex="~ col" grow gap-4 pt-14 md:px-12 :style="{ background: chromakeyMode ? chromakeyBgColor : '', color: chromakeyMode ? chromakeyTextColor : '' }">
         <div flex gap-2>
           <Button :disabled="isActive || !exercices.length" aria-label="Start" @click="start">
             <span i-ic-round-play-arrow inline-block text-2xl />
