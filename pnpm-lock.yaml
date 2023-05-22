@@ -27,6 +27,9 @@ devDependencies:
   '@iconify-json/ic':
     specifier: ^1.1.13
     version: 1.1.13
+  '@types/howler':
+    specifier: ^2.2.7
+    version: 2.2.7
   '@unocss/eslint-config':
     specifier: ^0.51.12
     version: 0.51.12(eslint@8.40.0)(typescript@5.0.2)
@@ -594,6 +597,10 @@ packages:
 
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
+    dev: true
+
+  /@types/howler@2.2.7:
+    resolution: {integrity: sha512-PEZldwZqJJw1PWRTpupyC7ajVTZA8aHd8nB/Y0n6zRZi5u8ktYDntsHj13ltEiBRqWwF06pASxBEvCTxniG8eA==}
     dev: true
 
   /@types/json-schema@7.0.11:
