@@ -51,7 +51,7 @@ const audio = new Howl({ src: ['/bell.mp3'] })
 function playSound() {
   if (!sound.value)
     return
-  audio.currentTime = 0
+  audio.seek(0)
   audio.play()
 }
 
