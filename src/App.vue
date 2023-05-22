@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useClipboard, useIntervalFn, useUrlSearchParams } from '@vueuse/core'
 import { useHead } from '@unhead/vue'
+import { Howl } from 'howler'
 
 import Input from './components/Input.vue'
 import Checkbox from './components/Checkbox.vue'
@@ -46,7 +47,7 @@ const startWithRest = ref(false)
 const compactMode = ref(false)
 const countdownMode = ref(false)
 
-const audio = new Audio('/bell.mp3')
+const audio = new Howl({ src: ['/bell.mp3'] })
 function playSound() {
   if (!sound.value)
     return
