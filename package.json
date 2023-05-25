@@ -13,11 +13,13 @@
     "@unocss/reset": "^0.51.12",
     "@vueuse/core": "^10.1.2",
     "@vueuse/sound": "^2.0.1",
+    "howler": "^2.2.3",
     "vue": "^3.2.47"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.6",
     "@iconify-json/ic": "^1.1.13",
+    "@types/howler": "^2.2.7",
     "@unocss/eslint-config": "^0.51.12",
     "@unocss/preset-icons": "^0.51.12",
     "@unocss/preset-web-fonts": "^0.51.12",

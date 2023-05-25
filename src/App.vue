@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useClipboard, useIntervalFn, useUrlSearchParams } from '@vueuse/core'
 import { useHead } from '@unhead/vue'
+import { Howl } from 'howler'
 
 import Input from './components/Input.vue'
 import Checkbox from './components/Checkbox.vue'
@@ -43,12 +44,14 @@ const chromakeyBgColor = ref('#38bef8')
 const chromakeyTextColor = ref('#ffffff')
 const sound = ref(true)
 const startWithRest = ref(false)
+const compactMode = ref(false)
+const countdownMode = ref(false)
 
-const audio = new Audio('/bell.mp3')
+const audio = new Howl({ src: ['/bell.mp3'] })
 function playSound() {
   if (!sound.value)
     return
-  audio.currentTime = 0
+  audio.seek(0)
   audio.play()
 }
 
@@ -131,7 +134,11 @@ function stop() {
 }
 
 const formatedTimer = computed(() => {
-  return formatTimer(timer.value)
+  if (countdownMode.value) {
+    const currentDuration = (isResting.value ? rest.value : duration.value) * 100
+    return formatTimer(currentDuration - timer.value)
+  }
+  else { return formatTimer(timer.value) }
 })
 
 const formatedGlobalTimer = computed(() => {
@@ -228,6 +235,12 @@ onMounted(() => {
             <Checkbox v-model="showExerciceIndex" name="show-exercice-index">
               Afficher les numéros
             </Checkbox>
+            <Checkbox v-model="compactMode" name="compact-mode">
+              Mode compact
+            </Checkbox>
+            <Checkbox v-model="countdownMode" name="countdown-mode">
+              Mode décompte
+            </Checkbox>
           </div>
           <div class="hidden" flex="md:~ col" gap-4>
             <Checkbox v-model="chromakeyMode" name="chromakey-mode">
@@ -263,27 +276,45 @@ onMounted(() => {
             <span class="hidden" md:inline-block>Stop</span>
           </Button>
         </div>
-        <p font-mono text="4xl md:7xl">
-          {{ formatedTimer }}
-        </p>
-        <p font-mono text="lg md:2xl">
-          {{ formatedGlobalTimer }}
-        </p>
-        <p v-if="exercices.length" text="3xl md:5xl">
-          Série n°<span font-mono>{{ currentRepetition }}</span>
-        </p>
-        <ul>
-          <template v-for="(exercice, index) in exercices" :key="`${exercice}`">
-            <li relative my-1 flex items-center gap-3 text="xl md:3xl" :class="[exerciceIsRunning(index) && 'text-lime-400', exerciceIsResting(index) && 'text-amber', stopped && 'hover:line-through cursor-pointer']" @click="stopped ? removeExercice(index) : true">
-              <div absolute mt-1 h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
-                <div i-ic-round-double-arrow absolute transition-all :class="exerciceIsRunning(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
-                <div i-ic-round-pause absolute transition-all :class="exerciceIsResting(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
-              </div>
-              <span v-if="showExerciceIndex"><span font-mono>{{ index + 1 }}</span>. </span>
-              {{ capitalizeFirstLetter(exercice) }}
-            </li>
-          </template>
-        </ul>
+        <div v-if="compactMode" flex="~ col" gap-1>
+          <p font-mono text="4xl md:7xl">
+            {{ formatedTimer }}
+          </p>
+          <p font-mono text="lg md:2xl">
+            {{ formatedGlobalTimer }} - Série n°{{ currentRepetition }}/{{ repetitions }}
+          </p>
+          <p text="lg md:2xl" relative :class="[!stopped && (isResting ? 'text-amber' : 'text-lime-400')]">
+            <span absolute h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
+              <div i-ic-round-double-arrow absolute transition-all :class="!stopped && !isResting ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
+              <div i-ic-round-pause absolute transition-all :class="!stopped && isResting ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
+            </span>
+            <span v-if="showExerciceIndex"><span font-mono>{{ currentExercice + 1 }}</span>. </span>
+            {{ capitalizeFirstLetter(exercices[currentExercice]) }}
+          </p>
+        </div>
+        <template v-else>
+          <p font-mono text="4xl md:7xl">
+            {{ formatedTimer }}
+          </p>
+          <p font-mono text="lg md:2xl">
+            {{ formatedGlobalTimer }}
+          </p>
+          <p v-if="exercices.length" text="3xl md:5xl">
+            Série n°<span font-mono>{{ currentRepetition }}/{{ repetitions }}</span>
+          </p>
+          <ul>
+            <template v-for="(exercice, index) in exercices" :key="`${exercice}`">
+              <li relative my-1 flex items-center gap-3 text="xl md:3xl" :class="[exerciceIsRunning(index) && 'text-lime-400', exerciceIsResting(index) && 'text-amber', stopped && 'hover:line-through cursor-pointer']" @click="stopped ? removeExercice(index) : true">
+                <div absolute mt-1 h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
+                  <div i-ic-round-double-arrow absolute transition-all :class="exerciceIsRunning(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
+                  <div i-ic-round-pause absolute transition-all :class="exerciceIsResting(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
+                </div>
+                <span v-if="showExerciceIndex"><span font-mono>{{ index + 1 }}</span>. </span>
+                {{ capitalizeFirstLetter(exercice) }}
+              </li>
+            </template>
+          </ul>
+        </template>
       </div>
     </div>
   </div>
