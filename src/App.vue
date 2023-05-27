@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
-import { useClipboard, useIntervalFn, useUrlSearchParams } from '@vueuse/core'
 import { useHead } from '@unhead/vue'
 import { Howl } from 'howler'
 import Draggable from 'vuedraggable'
-
-import Input from './components/Input.vue'
-import Checkbox from './components/Checkbox.vue'
-import Button from './components/Button.vue'
-import { slugify } from './utils/string'
 
 useHead({
   title: 'RepIt',
