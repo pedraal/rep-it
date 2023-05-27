@@ -14,7 +14,8 @@
     "@vueuse/core": "^10.1.2",
     "@vueuse/sound": "^2.0.1",
     "howler": "^2.2.3",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.6",
@@ -30,7 +31,11 @@
     "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2",
     "unocss": "^0.51.12",
+    "unplugin-auto-import": "^0.16.2",
+    "unplugin-vue-components": "^0.24.1",
+    "unplugin-vue-macros": "^2.2.1",
     "vite": "^4.3.2",
+    "vite-plugin-vue-devtools": "^0.0.22",
     "vue-tsc": "^1.4.2"
   }
 }
