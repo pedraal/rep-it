@@ -39,13 +39,13 @@ const duration = ref(30)
 const rest = ref(15)
 const newExercice = ref('')
 const showExerciceIndex = ref(false)
-const chromakeyMode = ref(false)
-const chromakeyBgColor = ref('#38bef8')
-const chromakeyTextColor = ref('#ffffff')
 const sound = ref(true)
 const startWithRest = ref(false)
 const compactMode = ref(false)
 const countdownMode = ref(false)
+const chromakeyMode = ref(false)
+const chromakeyBgColor = ref('#38bef8')
+const chromakeyTextColor = ref('#ffffff')
 
 const audio = new Howl({ src: ['/bell.mp3'] })
 function playSound() {
@@ -172,6 +172,14 @@ function share() {
   params.duration = duration.value.toString()
   params.rest = rest.value.toString()
   params.exercices = exercices.value.join(',')
+  params.sound = sound.value.toString()
+  params.startWithRest = startWithRest.value.toString()
+  params.showExerciceIndex = showExerciceIndex.value.toString()
+  params.compactMode = compactMode.value.toString()
+  params.countdownMode = countdownMode.value.toString()
+  params.chromakeyMode = chromakeyMode.value.toString()
+  params.chromakeyBgColor = chromakeyBgColor.value
+  params.chromakeyTextColor = chromakeyTextColor.value
   nextTick(() => copy(location.href))
 }
 
@@ -184,6 +192,22 @@ onMounted(() => {
     rest.value = parseInt(params.rest)
   if (typeof params.exercices === 'string')
     exercices.value = params.exercices.split(',').filter(e => e !== '')
+  if (typeof params.sound === 'string')
+    sound.value = params.sound === 'true'
+  if (typeof params.startWithRest === 'string')
+    startWithRest.value = params.startWithRest === 'true'
+  if (typeof params.showExerciceIndex === 'string')
+    showExerciceIndex.value = params.showExerciceIndex === 'true'
+  if (typeof params.compactMode === 'string')
+    compactMode.value = params.compactMode === 'true'
+  if (typeof params.countdownMode === 'string')
+    countdownMode.value = params.countdownMode === 'true'
+  if (typeof params.chromakeyMode === 'string')
+    chromakeyMode.value = params.chromakeyMode === 'true'
+  if (typeof params.chromakeyBgColor === 'string')
+    chromakeyBgColor.value = params.chromakeyBgColor
+  if (typeof params.chromakeyTextColor === 'string')
+    chromakeyTextColor.value = params.chromakeyTextColor
 })
 </script>
 
