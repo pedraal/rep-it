@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
-import { useClipboard, useIntervalFn, useUrlSearchParams } from '@vueuse/core'
 import { useHead } from '@unhead/vue'
 import { Howl } from 'howler'
-
-import Input from './components/Input.vue'
-import Checkbox from './components/Checkbox.vue'
-import Button from './components/Button.vue'
+import Draggable from 'vuedraggable'
 
 useHead({
   title: 'RepIt',
@@ -55,7 +50,7 @@ function playSound() {
   audio.play()
 }
 
-const exercices = ref<string[]>([
+const initialExercices = [
   'Jumping jacks',
   'Fentes avant',
   'Burpees',
@@ -64,7 +59,22 @@ const exercices = ref<string[]>([
   'Moutain climbers',
   'Tirages dos',
   'Planche',
-])
+]
+
+function exercicesStringArrayToObjectArray(exercices: string[]) {
+  return exercices.map(exerciceStringToObject)
+}
+
+function exerciceStringToObject(exercice: string) {
+  return {
+    label: exercice,
+    id: slugify(exercice),
+  }
+}
+
+const drag = ref(false)
+const dragged: Ref<number | null> = ref(null)
+const exercices = ref(exercicesStringArrayToObjectArray(initialExercices))
 const currentExercice = ref(0)
 const currentRepetition = ref(1)
 const isResting = ref(false)
@@ -74,7 +84,7 @@ const stopped = ref(true)
 function addExercice() {
   if (!newExercice.value)
     return
-  exercices.value.push(newExercice.value)
+  exercices.value.push(exerciceStringToObject(newExercice.value))
   newExercice.value = ''
 }
 
@@ -171,7 +181,7 @@ function share() {
   params.repetitions = repetitions.value.toString()
   params.duration = duration.value.toString()
   params.rest = rest.value.toString()
-  params.exercices = exercices.value.join(',')
+  params.exercices = exercices.value.map(e => e.label).join(',')
   params.sound = sound.value.toString()
   params.startWithRest = startWithRest.value.toString()
   params.showExerciceIndex = showExerciceIndex.value.toString()
@@ -191,7 +201,7 @@ onMounted(() => {
   if (typeof params.rest === 'string')
     rest.value = parseInt(params.rest)
   if (typeof params.exercices === 'string')
-    exercices.value = params.exercices.split(',').filter(e => e !== '')
+    exercices.value = exercices.value = exercicesStringArrayToObjectArray(params.exercices.split(',').filter(e => e !== ''))
   if (typeof params.sound === 'string')
     sound.value = params.sound === 'true'
   if (typeof params.startWithRest === 'string')
@@ -301,10 +311,10 @@ onMounted(() => {
           </Button>
         </div>
         <div v-if="compactMode" flex="~ col" gap-1>
-          <p font-mono text="4xl md:7xl">
+          <p font-mono font-semibold text="4xl md:7xl">
             {{ formatedTimer }}
           </p>
-          <p font-mono text="lg md:2xl">
+          <p font-mono font-semibold text="lg md:2xl">
             {{ formatedGlobalTimer }} - Série n°{{ currentRepetition }}/{{ repetitions }}
           </p>
           <p text="lg md:2xl" relative :class="[!stopped && (isResting ? 'text-amber' : 'text-lime-400')]">
@@ -313,7 +323,7 @@ onMounted(() => {
               <div i-ic-round-pause absolute transition-all :class="!stopped && isResting ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
             </span>
             <span v-if="showExerciceIndex"><span font-mono>{{ currentExercice + 1 }}</span>. </span>
-            {{ capitalizeFirstLetter(exercices[currentExercice]) }}
+            {{ capitalizeFirstLetter(exercices[currentExercice].label) }}
           </p>
         </div>
         <template v-else>
@@ -326,18 +336,33 @@ onMounted(() => {
           <p v-if="exercices.length" text="3xl md:5xl">
             Série n°<span font-mono>{{ currentRepetition }}/{{ repetitions }}</span>
           </p>
-          <ul>
-            <template v-for="(exercice, index) in exercices" :key="`${exercice}`">
-              <li relative my-1 flex items-center gap-3 text="xl md:3xl" :class="[exerciceIsRunning(index) && 'text-lime-400', exerciceIsResting(index) && 'text-amber', stopped && 'hover:line-through cursor-pointer']" @click="stopped ? removeExercice(index) : true">
-                <div absolute mt-1 h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
+          <Draggable
+            v-model="exercices"
+            item-key="id"
+            class="w-max inline-flex flex-col gap-3"
+            @start="dragged = parseInt($event.item.id); drag = true"
+            @end="dragged = null; drag = false"
+          >
+            <template #item="{ element, index }">
+              <li
+                :id="index"
+                relative w-max flex cursor-grab items-center gap-2 text="xl md:3xl"
+                :class="[
+                  exerciceIsRunning(index) && 'text-lime-400',
+                  exerciceIsResting(index) && 'text-amber',
+                  stopped && 'group  cursor-grab',
+                  dragged === index ? 'text-lime-400' : '']"
+              >
+                <div absolute h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
                   <div i-ic-round-double-arrow absolute transition-all :class="exerciceIsRunning(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
                   <div i-ic-round-pause absolute transition-all :class="exerciceIsResting(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
+                  <div v-if="stopped" i-ic-round-close absolute w-4 cursor-pointer @click="removeExercice(index)" />
                 </div>
-                <span v-if="showExerciceIndex"><span font-mono>{{ index + 1 }}</span>. </span>
-                {{ capitalizeFirstLetter(exercice) }}
+                <span v-if="showExerciceIndex"><span font-mono>{{ index + 1 }}</span>.</span>
+                {{ capitalizeFirstLetter(element.label) }}
               </li>
             </template>
-          </ul>
+          </Draggable>
         </template>
       </div>
     </div>
