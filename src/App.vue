@@ -73,6 +73,7 @@ function exerciceStringToObject(exercice: string) {
 }
 
 const drag = ref(false)
+const dragged: Ref<number | null> = ref(null)
 const exercices = ref(exercicesStringArrayToObjectArray(initialExercices))
 const currentExercice = ref(0)
 const currentRepetition = ref(1)
@@ -339,15 +340,23 @@ onMounted(() => {
             v-model="exercices"
             item-key="id"
             class="w-max inline-flex flex-col gap-3"
-            @start="drag = true"
-            @end="drag = false"
+            @start="dragged = parseInt($event.item.id); drag = true"
+            @end="dragged = null; drag = false"
           >
             <template #item="{ element, index }">
-              <li relative w-max flex cursor-pointer items-center gap-2 text="xl md:3xl" :class="[exerciceIsRunning(index) && 'text-lime-400', exerciceIsResting(index) && 'text-amber', stopped && 'group']">
+              <li
+                :id="index"
+                relative w-max flex cursor-grab items-center gap-2 text="xl md:3xl"
+                :class="[
+                  exerciceIsRunning(index) && 'text-lime-400',
+                  exerciceIsResting(index) && 'text-amber',
+                  stopped && 'group  cursor-grab',
+                  dragged === index ? 'text-lime-400' : '']"
+              >
                 <div absolute h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
                   <div i-ic-round-double-arrow absolute transition-all :class="exerciceIsRunning(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
                   <div i-ic-round-pause absolute transition-all :class="exerciceIsResting(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
-                  <div v-if="stopped" i-ic-round-close absolute w-4 @click="removeExercice(index)" />
+                  <div v-if="stopped" i-ic-round-close absolute w-4 cursor-pointer @click="removeExercice(index)" />
                 </div>
                 <span v-if="showExerciceIndex"><span font-mono>{{ index + 1 }}</span>.</span>
                 {{ capitalizeFirstLetter(element.label) }}
