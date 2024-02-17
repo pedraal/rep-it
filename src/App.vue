@@ -7,7 +7,7 @@ useHead({
   title: 'RepIt',
   script: [
     {
-      'src': 'https://plausible.pedraal.fr/js/plausible.js',
+      'src': 'https://plausible.pedraal.dev/js/plausible.js',
       'defer': true,
       'data-domain': window.location?.host,
     },
@@ -235,18 +235,18 @@ onMounted(() => {
         <form my-4 flex="~ col" gap-4 @submit.prevent>
           <div flex="~ md:col" gap-4>
             <Input v-model="repetitions" name="repetitions" :disabled="isActive" w="1/4 md:full">
-              Séries
+            Séries
             </Input>
             <Input v-model="duration" name="duration" :disabled="isActive" w="1/4 md:full">
-              Durée
+            Durée
             </Input>
             <Input v-model="rest" name="rest" :disabled="isActive" w="1/4 md:full">
-              Repos
+            Repos
             </Input>
           </div>
           <div flex="~ col" gap-4>
             <Input v-model="newExercice" name="exercice" :disabled="isActive" @keyup.enter.prevent="addExercice">
-              Exercice
+            Exercice
             </Input>
             <div md:w-full>
               <Button :disabled="isActive" w-full @click.prevent="addExercice">
@@ -281,10 +281,10 @@ onMounted(() => {
               Mode chromakey
             </Checkbox>
             <Input v-if="chromakeyMode" v-model="chromakeyBgColor" name="chromakey-bg-color" type="color">
-              Couleur fond
+            Couleur fond
             </Input>
             <Input v-if="chromakeyMode" v-model="chromakeyTextColor" name="chromakey-text-color" type="color">
-              Couleur texte
+            Couleur texte
             </Input>
           </div>
           <Button @click.prevent="share">
@@ -336,23 +336,13 @@ onMounted(() => {
           <p v-if="exercices.length" text="3xl md:5xl">
             Série n°<span font-mono>{{ currentRepetition }}/{{ repetitions }}</span>
           </p>
-          <Draggable
-            v-model="exercices"
-            item-key="id"
-            class="w-max inline-flex flex-col gap-3"
-            @start="dragged = parseInt($event.item.id); drag = true"
-            @end="dragged = null; drag = false"
-          >
+          <Draggable v-model="exercices" item-key="id" class="w-max inline-flex flex-col gap-3" @start="dragged = parseInt($event.item.id); drag = true" @end="dragged = null; drag = false">
             <template #item="{ element, index }">
-              <li
-                :id="index"
-                relative w-max flex cursor-grab items-center gap-2 text="xl md:3xl"
-                :class="[
-                  exerciceIsRunning(index) && 'text-lime-400',
-                  exerciceIsResting(index) && 'text-amber',
-                  stopped && 'group  cursor-grab',
-                  dragged === index ? 'text-lime-400' : '']"
-              >
+              <li :id="index" relative w-max flex cursor-grab items-center gap-2 text="xl md:3xl" :class="[
+                exerciceIsRunning(index) && 'text-lime-400',
+                exerciceIsResting(index) && 'text-amber',
+                stopped && 'group  cursor-grab',
+                dragged === index ? 'text-lime-400' : '']">
                 <div absolute h-8 min-h-8 min-w-8 w-8 flex items-center justify-center left="-8 md:-10">
                   <div i-ic-round-double-arrow absolute transition-all :class="exerciceIsRunning(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
                   <div i-ic-round-pause absolute transition-all :class="exerciceIsResting(index) ? 'translate-x-0' : 'opacity-0 -translate-x-5'" />
